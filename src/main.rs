@@ -126,10 +126,13 @@ fn get_single_value(response: &mut String) -> f64{
 fn get_coordinates(response: &mut String) -> McCoordinates {
     loop {
         response.clear();
-        print!("Enter coordinates(delimit with whitespace)(x y z) »» ");
+        println!("Enter coordinates (delimit with whitespace)");
+        print!("    x y z »» ");
         io::stdout().flush().unwrap();
         io::stdin().read_line(response).expect("Couldn't read line");
         
+        // core::str:split_whitespace() automatically looks for any whitespaces, including \n,
+        // so no .trim() is needed
         let mut iter = response.split_whitespace();
         let x = match iter.next() {
             Some(x) => x,
