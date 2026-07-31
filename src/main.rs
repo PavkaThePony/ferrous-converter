@@ -1,7 +1,8 @@
 use std::io::{self, Write};
 
-const EQUESTRIAN_GRAVITY: f64        = 9.807; // m/s^2
-const DISPLACEMENT_SCALE_FACTOR: f64 = 1000.0; // teleportation is hard for the world 
+const EQUESTRIAN_GRAVITY: f64        = 9.807;   // m/s^2
+const DISPLACEMENT_SCALE_FACTOR: f64 = 1000.0;  // teleportation is hard for the world 
+const RESISTANCE_FACTOR: f64         = 10.0;
 
 enum Direction {
     Unspecified,
@@ -360,10 +361,12 @@ fn do_earth_scales_to_uups_process() {
                 blank.clear();
                 match direction {
                     Direction::Horizontal => {
-                        // F = m * (d/(t*t))
-                        // W = (F*d)/t
-                        let force: f64 = mass_of_object * (distance / (time_of_casting * time_of_casting));
-                        let result: f64 = (force * distance) / time_of_casting;
+                        // v = d / t
+                        let velocity: f64 = distance / time_of_casting;
+                        // KE = 0.5 * m * v^2
+                        let kinetic_energy: f64 = 0.5 * mass_of_object * (velocity * velocity);
+                        // W = energy / t
+                        let result: f64 = (kinetic_energy / time_of_casting) * RESISTANCE_FACTOR;
                         let res = ConvResult {
                             value: result.to_string(),
                             type_m: String::from("Watt"),
@@ -372,9 +375,12 @@ fn do_earth_scales_to_uups_process() {
                         break;
                     }
                     Direction::Vertical => {
-                        // same formula, but considering the gravitation.
-                        let force: f64 = mass_of_object * ((distance / (time_of_casting * time_of_casting)) + EQUESTRIAN_GRAVITY);
-                        let result: f64 = (force * distance) / time_of_casting;
+                        let velocity: f64 = distance / time_of_casting;
+                        // PE = m * g * h
+                        let potential_energy: f64 = mass_of_object * EQUESTRIAN_GRAVITY * distance;
+                        // KE = 0.5 * m * v^2
+                        let kinetic_energy: f64 = 0.5 * mass_of_object * (velocity * velocity);
+                        let result: f64 = ((potential_energy + kinetic_energy) / time_of_casting) * RESISTANCE_FACTOR;
                         let res = ConvResult {
                             value: result.to_string(),
                             type_m: String::from("Watt"),
@@ -530,7 +536,7 @@ fn do_earth_scales_to_uups_process() {
                 // final calculation
                 // Work = m * 3 * t * complexity_factor * will_power
                 // W = Work / t
-                let work = mass_of_object * 3.0 * time_of_casting * complexity_factor * will_power_of_casting_pony;
+                let work = mass_of_object * 3.0 * complexity_factor * will_power_of_casting_pony;
                 let result = work / time_of_casting;
                 let res = ConvResult {
                     value: result.to_string(),
