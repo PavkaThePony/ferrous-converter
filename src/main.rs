@@ -181,7 +181,7 @@ fn get_coordinates(response: &mut String) -> McCoordinates {
     loop {
         response.clear();
         println!("Enter coordinates (delimit with whitespace)");
-        print!("    x y z »» ");
+        print!(" x y z »» ");
         io::stdout().flush().unwrap();
         io::stdin().read_line(response).expect("Couldn't read line");
         
@@ -330,7 +330,7 @@ fn do_earth_scales_to_uups_process() {
                 println!("│║1 -> Horizontal   ║");
                 println!("│║2 -> Vertical     ║");
                 println!("│╚══════════════════╝");
-                print!("│Direction(number) > ");
+                print!("│  Direction(number) > ");
                 io::stdout().flush().unwrap();
                 io::stdin().read_line(&mut direction).expect("Couldn't read line");
                 let direction = match direction.trim().parse::<i32>() {
@@ -354,11 +354,6 @@ fn do_earth_scales_to_uups_process() {
                 println!("│╰─────────────────────────────────────╯");
                 println!("└────────────────────────────────────────┘");
                 println!();
-                let mut blank = String::new();
-                print!("Enter anything to proceed ");
-                io::stdout().flush().unwrap();
-                io::stdin().read_line(&mut blank).expect("Couldn't read line");
-                blank.clear();
                 match direction {
                     Direction::Horizontal => {
                         // v = d / t
@@ -441,7 +436,8 @@ fn do_earth_scales_to_uups_process() {
                         println!("Failed to parse! Did you enter something besides number?");
                         continue;
                     }
-                };
+                };                
+                println!("└────────────────────────────────────────┘");
                 let barrier_type_passed_through_enum = match barrier_type_passed_through {
                     1 => ObstacleType::None,
                     2 => ObstacleType::WithHoles,
